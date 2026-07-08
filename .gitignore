@@ -22,4 +22,4 @@ Thumbs.db
 .vscode/
 
 # Prisma
-prisma/dev.db
+prisma/dev.dbgit rev-parse --show-toplevel
