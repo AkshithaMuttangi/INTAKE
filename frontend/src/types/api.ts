@@ -1,5 +1,14 @@
 export type UserRole = "END_USER" | "SUPPORT_AGENT" | "TEAM_LEAD" | "ADMIN";
 
+export type TicketStatus =
+  | "OPEN"
+  | "IN_PROGRESS"
+  | "PENDING_CUSTOMER"
+  | "RESOLVED"
+  | "CLOSED";
+
+export type TicketPriority = "P1_CRITICAL" | "P2_HIGH" | "P3_MEDIUM" | "P4_LOW";
+
 export interface AuthUser {
   id: string;
   email: string;
