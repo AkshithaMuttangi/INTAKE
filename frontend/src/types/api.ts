@@ -14,6 +14,19 @@ export interface AuthResponseData {
   accessToken: string;
 }
 
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterData {
+  email: string;
+  password: string;
+  name: string;
+  department?: string;
+  role?: UserRole;
+}
+
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;
