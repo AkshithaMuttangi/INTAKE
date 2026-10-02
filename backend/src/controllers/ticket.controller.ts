@@ -5,6 +5,7 @@ import { TicketService } from "../services/ticket.service";
 import { AuthenticatedRequest } from "../types";
 import { AppError } from "../middleware/errorHandler";
 import { prisma } from "../config/prisma";
+import { Role } from "@prisma/client";
 
 export class TicketController {
   public static async getTickets(
@@ -29,7 +30,7 @@ export class TicketController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const ticket = await TicketService.getTicketById(id, req.user!);
       res.status(200).json({
         success: true,
@@ -70,7 +71,7 @@ export class TicketController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const { status } = req.body;
       const ticket = await TicketService.updateStatus(id, status, req.user!);
       res.status(200).json({
@@ -88,7 +89,7 @@ export class TicketController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const { priority } = req.body;
       const ticket = await TicketService.updatePriority(id, priority, req.user!);
       res.status(200).json({
@@ -106,7 +107,7 @@ export class TicketController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const { assigneeId } = req.body;
       const ticket = await TicketService.reassignTicket(id, assigneeId, req.user!);
       res.status(200).json({
@@ -124,7 +125,7 @@ export class TicketController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       const { content, isInternalOnly } = req.body;
       const comment = await TicketService.addComment({
         ticketId: id,
@@ -147,7 +148,7 @@ export class TicketController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { id } = req.params;
+      const id = req.params.id as string;
       if (!req.file) {
         throw new AppError("No file uploaded or file rejected", 400, "MISSING_FILE");
       }
@@ -173,13 +174,27 @@ export class TicketController {
     next: NextFunction
   ): Promise<void> {
     try {
-      const { attachmentId } = req.params;
+      const attachmentId = req.params.attachmentId as string;
       const attachment = await prisma.attachment.findUnique({
         where: { id: attachmentId },
+        include: {
+          ticket: {
+            select: { id: true, creatorId: true },
+          },
+        },
       });
 
       if (!attachment) {
         throw new AppError("Attachment not found", 404, "ATTACHMENT_NOT_FOUND");
+      }
+
+      // Role check: End users can only download attachments from their own tickets
+      if (req.user!.role === Role.END_USER && attachment.ticket.creatorId !== req.user!.id) {
+        throw new AppError(
+          "Forbidden: You cannot access attachments on tickets created by other users",
+          403,
+          "FORBIDDEN"
+        );
       }
 
       const filePath = path.resolve(attachment.filePath);

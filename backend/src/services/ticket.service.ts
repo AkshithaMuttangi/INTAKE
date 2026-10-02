@@ -158,6 +158,15 @@ export class TicketService {
           select: { id: true, name: true, email: true, department: true },
         },
         auditLogs: {
+          where:
+            user.role === Role.END_USER
+              ? {
+                  OR: [
+                    { newValue: null },
+                    { newValue: { not: "Added internal note" } },
+                  ],
+                }
+              : {},
           include: {
             performedBy: {
               select: { id: true, name: true, email: true, role: true },
@@ -282,7 +291,7 @@ export class TicketService {
       if (now.getTime() > existing.resolveDueAt.getTime()) {
         updateData.slaBreached = true;
       }
-    } else if (existing.status === Status.RESOLVED && newStatus !== Status.RESOLVED) {
+    } else if (existing.status === Status.RESOLVED) {
       // Re-opening ticket
       updateData.resolvedAt = null;
     }
@@ -418,6 +427,10 @@ export class TicketService {
       throw new AppError("Ticket not found", 404, "TICKET_NOT_FOUND");
     }
 
+    if (author.role === Role.END_USER && ticket.creatorId !== author.id) {
+      throw new AppError("Forbidden: You cannot comment on tickets created by other users", 403, "FORBIDDEN");
+    }
+
     if (author.role === Role.END_USER && isInternalOnly) {
       throw new AppError("End Users cannot post internal-only notes", 403, "FORBIDDEN");
     }
@@ -462,6 +475,10 @@ export class TicketService {
     const ticket = await prisma.ticket.findUnique({ where: { id: ticketId } });
     if (!ticket) {
       throw new AppError("Ticket not found", 404, "TICKET_NOT_FOUND");
+    }
+
+    if (uploader.role === Role.END_USER && ticket.creatorId !== uploader.id) {
+      throw new AppError("Forbidden: You cannot upload attachments to tickets created by other users", 403, "FORBIDDEN");
     }
 
     const attachment = await prisma.attachment.create({

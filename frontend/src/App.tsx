@@ -9,6 +9,7 @@ import { TicketsPage } from "./pages/tickets/TicketsPage";
 
 import { DashboardPage } from "./pages/dashboard/DashboardPage";
 import { WorkloadPage } from "./pages/workload/WorkloadPage";
+import { TicketDetailPage } from "./pages/tickets/TicketDetailPage";
 
 const AnalyticsPlaceholder: React.FC = () => (
   <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
@@ -34,6 +35,7 @@ function App() {
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/tickets" element={<TicketsPage />} />
+          <Route path="/tickets/:id" element={<TicketDetailPage />} />
           <Route path="/analytics" element={<AnalyticsPlaceholder />} />
           <Route path="/workload" element={<WorkloadPage />} />
         </Route>
