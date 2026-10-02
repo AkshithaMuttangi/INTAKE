@@ -4,7 +4,6 @@ import cors from "cors";
 import compression from "compression";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
-import path from "path";
 
 import routes from "./routes";
 import { correlationIdMiddleware } from "./middleware/correlationId";
@@ -49,19 +48,15 @@ app.use(
   })
 );
 
-// 3. Static Files (Uploads)
-const uploadDir = path.resolve(process.cwd(), process.env.UPLOAD_DIR || "uploads");
-app.use("/uploads", express.static(uploadDir));
-
-// 4. API Routes
+// 3. API Routes
 app.use("/api", routes);
 
-// 5. 404 Handler for undefined routes
+// 4. 404 Handler for undefined routes
 app.use((req: Request, _res: Response, next: NextFunction) => {
   next(new AppError(`Endpoint not found: ${req.method} ${req.originalUrl}`, 404, "NOT_FOUND"));
 });
 
-// 6. Centralized Error Handler
+// 5. Centralized Error Handler
 app.use(errorHandler);
 
 export default app;
