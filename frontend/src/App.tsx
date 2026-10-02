@@ -7,29 +7,14 @@ import { LoginPage } from "./pages/auth/LoginPage";
 import { RegisterPage } from "./pages/auth/RegisterPage";
 import { TicketsPage } from "./pages/tickets/TicketsPage";
 
-const DashboardPlaceholder: React.FC = () => (
-  <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-    <h1 className="text-xl font-bold text-slate-900 dark:text-white">Enterprise Dashboard</h1>
-    <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-      Route shell active. Ready for Feature 8 (Role-Based Dynamic Portals).
-    </p>
-  </div>
-);
+import { DashboardPage } from "./pages/dashboard/DashboardPage";
+import { WorkloadPage } from "./pages/workload/WorkloadPage";
 
 const AnalyticsPlaceholder: React.FC = () => (
   <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
     <h1 className="text-xl font-bold text-slate-900 dark:text-white">Incident Analytics</h1>
     <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
       Route shell active. Ready for Feature 10 (Incident Analytics Dashboard with Recharts).
-    </p>
-  </div>
-);
-
-const WorkloadPlaceholder: React.FC = () => (
-  <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-    <h1 className="text-xl font-bold text-slate-900 dark:text-white">Team Workload Balancing</h1>
-    <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
-      Route shell active. Ready for Feature 8 (Team Lead / Admin Workload View).
     </p>
   </div>
 );
@@ -47,10 +32,10 @@ function App() {
       <Route element={<ProtectedRoute />}>
         <Route element={<AppLayout />}>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<DashboardPlaceholder />} />
+          <Route path="/dashboard" element={<DashboardPage />} />
           <Route path="/tickets" element={<TicketsPage />} />
           <Route path="/analytics" element={<AnalyticsPlaceholder />} />
-          <Route path="/workload" element={<WorkloadPlaceholder />} />
+          <Route path="/workload" element={<WorkloadPage />} />
         </Route>
       </Route>
 
